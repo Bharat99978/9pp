@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e2f;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .calculator {
+            background-color: #282c34;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+            width: 320px;
+        }
+        .calculator input {
+            width: 100%;
+            font-size: 24px;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3a3f4b;
+            color: white;
+        }
+        .calculator button {
+            width: 22%;
+            margin: 1%;
+            font-size: 18px;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3a3f4b;
+            color: #f9aa33;
+            cursor: pointer;
+        }
+        .calculator button:hover {
+            background-color: #5a5f6b;
+        }
+        #result {
+            font-size: 20px;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <form id="calcForm">
+            <input type="text" id="expression" name="expression" placeholder="Enter calculation" required>
+            <div>
+                <button type="button" onclick="appendValue('1')">1</button>
+                <button type="button" onclick="appendValue('2')">2</button>
+                <button type="button" onclick="appendValue('3')">3</button>
+                <button type="button" onclick="appendValue('+')">+</button>
+            </div>
+            <div>
+                <button type="button" onclick="appendValue('4')">4</button>
+                <button type="button" onclick="appendValue('5')">5</button>
+                <button type="button" onclick="appendValue('6')">6</button>
+                <button type="button" onclick="appendValue('-')">-</button>
+            </div>
+            <div>
+                <button type="button" onclick="appendValue('7')">7</button>
+                <button type="button" onclick="appendValue('8')">8</button>
+                <button type="button" onclick="appendValue('9')">9</button>
+                <button type="button" onclick="appendValue('*')">*</button>
+            </div>
+            <div>
+                <button type="button" onclick="appendValue('0')">0</button>
+                <button type="button" onclick="appendValue('.')">.</button>
+                <button type="submit">=</button>
+                <button type="button" onclick="appendValue('/')">/</button>
+            </div>
+        </form>
+        <p id="result"></p>
+    </div>
+    <script>
+        // Append the clicked button value to the input field
+        function appendValue(value) {
+            document.getElementById('expression').value += value;
+        }
+
+        // Handle form submission to calculate result
+        document.getElementById('calcForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const expression = document.getElementById('expression').value;
+            fetch('/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ expression }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result !== undefined) {
+                        document.getElementById('result').innerText = 'Result: ' + data.result;
+                    } else {
+                        document.getElementById('result').innerText = 'Error';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('result').innerText = 'Error';
+                });
+        });
+    </script>
+</body>
+</html>
